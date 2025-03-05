@@ -39,7 +39,7 @@ const config: HardhatUserConfig = {
       },
     ],
   },
-  defaultNetwork: "localhost",
+  defaultNetwork: "arbitrumSepolia",
   namedAccounts: {
     deployer: {
       // By default, it will take the first Hardhat account as the deployer
@@ -49,12 +49,6 @@ const config: HardhatUserConfig = {
   networks: {
     // View the networks that are pre-configured.
     // If the network you are looking for is not here you can add new network settings
-    hardhat: {
-      forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
-        enabled: process.env.MAINNET_FORKING_ENABLED === "true",
-      },
-    },
     mainnet: {
       url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
       accounts: [deployerPrivateKey],
@@ -70,95 +64,7 @@ const config: HardhatUserConfig = {
     arbitrumSepolia: {
       url: `https://arb-sepolia.g.alchemy.com/v2/${providerApiKey}`,
       accounts: [deployerPrivateKey],
-    },
-    optimism: {
-      url: `https://opt-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-      verify: {
-        etherscan: {
-          apiUrl: "https://api-optimistic.etherscan.io",
-          apiKey: etherscanOptimisticApiKey,
-        },
-      },
-    },
-    optimismSepolia: {
-      url: `https://opt-sepolia.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-      verify: {
-        etherscan: {
-          apiUrl: "https://api-sepolia-optimistic.etherscan.io",
-          apiKey: etherscanOptimisticApiKey,
-        },
-      },
-    },
-    polygon: {
-      url: `https://polygon-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonMumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonZkEvm: {
-      url: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonZkEvmTestnet: {
-      url: `https://polygonzkevm-testnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    gnosis: {
-      url: "https://rpc.gnosischain.com",
-      accounts: [deployerPrivateKey],
-    },
-    chiado: {
-      url: "https://rpc.chiadochain.net",
-      accounts: [deployerPrivateKey],
-    },
-    base: {
-      url: "https://mainnet.base.org",
-      accounts: [deployerPrivateKey],
-      verify: {
-        etherscan: {
-          apiUrl: "https://api.basescan.org",
-          apiKey: basescanApiKey,
-        },
-      },
-    },
-    baseSepolia: {
-      url: "https://sepolia.base.org",
-      accounts: [deployerPrivateKey],
-      verify: {
-        etherscan: {
-          apiUrl: "https://api-sepolia.basescan.org",
-          apiKey: basescanApiKey,
-        },
-      },
-    },
-    scrollSepolia: {
-      url: "https://sepolia-rpc.scroll.io",
-      accounts: [deployerPrivateKey],
-    },
-    scroll: {
-      url: "https://rpc.scroll.io",
-      accounts: [deployerPrivateKey],
-    },
-    pgn: {
-      url: "https://rpc.publicgoods.network",
-      accounts: [deployerPrivateKey],
-    },
-    pgnTestnet: {
-      url: "https://sepolia.publicgoods.network",
-      accounts: [deployerPrivateKey],
-    },
-    celo: {
-      url: "https://forno.celo.org",
-      accounts: [deployerPrivateKey],
-    },
-    celoAlfajores: {
-      url: "https://alfajores-forno.celo-testnet.org",
-      accounts: [deployerPrivateKey],
-    },
+    }
   },
   // configuration for harhdat-verify plugin
   etherscan: {
