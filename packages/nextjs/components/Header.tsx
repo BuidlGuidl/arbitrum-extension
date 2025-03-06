@@ -26,6 +26,12 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/debug",
     icon: <BugAntIcon className="h-4 w-4" />,
   },
+
+  {
+    label: "Arb Address Table",
+    href: "/arbitrum",
+    icon: <BugAntIcon className="h-4 w-4" />,
+  },
 ];
 
 export const HeaderMenuLinks = () => {
