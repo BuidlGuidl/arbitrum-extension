@@ -7,7 +7,7 @@ import { useScaffoldEventHistory, useScaffoldReadContract, useScaffoldWriteContr
 
 const DEPLOYED_ON_BLOCK = 12960000n;
 
-export default function ArbAddressTableComponent() {
+export default function AddressTableExample() {
   const { address } = useAccount();
   const [message, setMessage] = useState("");
   const [addressToRegister, setAddressToRegister] = useState("");

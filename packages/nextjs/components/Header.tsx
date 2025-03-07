@@ -28,8 +28,14 @@ export const menuLinks: HeaderMenuLink[] = [
   },
 
   {
-    label: "Arb Address Table",
-    href: "/arbitrum",
+    label: "Address Table",
+    href: "/address-table",
+    icon: <BugAntIcon className="h-4 w-4" />,
+  },
+
+  {
+    label: "Bridge",
+    href: "/bridge",
     icon: <BugAntIcon className="h-4 w-4" />,
   },
 ];
