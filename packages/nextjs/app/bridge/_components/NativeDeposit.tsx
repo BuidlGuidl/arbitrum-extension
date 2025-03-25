@@ -7,7 +7,7 @@ import { parseEther } from "viem";
 import { useAccount, useChainId, usePublicClient, useSwitchChain, useWalletClient } from "wagmi";
 import scaffoldConfig from "~~/scaffold.config";
 import { clientToSigner } from "~~/utils/arbitrum/ethersAdapters";
-import { ARBITRUM_ONE, ARBITRUM_SEPOLIA, MAINNET, getL1ChainId, isChainL1 } from "~~/utils/arbitrum/utils";
+import { ARBITRUM_ONE, getL1ChainId, getL2ChainId, isChainL1 } from "~~/utils/arbitrum/utils";
 import { notification } from "~~/utils/scaffold-eth";
 
 export default function NativeDeposit() {
@@ -46,7 +46,7 @@ export default function NativeDeposit() {
       const l1Signer = clientToSigner(walletClient);
 
       // If mainnet, use Arbitrum One, otherwise use Arbitrum Sepolia
-      const l2ChainId = chainId === MAINNET ? ARBITRUM_ONE : ARBITRUM_SEPOLIA;
+      const l2ChainId = getL2ChainId(chainId);
       // For L2, we'll use the RPC URL directly since we don't need signing capabilities
       const l2Provider = new providers.JsonRpcProvider(
         scaffoldConfig.targetNetworks.find(n => n.id === l2ChainId)?.rpcUrls.default.http[0],

@@ -38,6 +38,12 @@ export const menuLinks: HeaderMenuLink[] = [
     href: "/bridge",
     icon: <BugAntIcon className="h-4 w-4" />,
   },
+
+  {
+    label: "Forced Tx",
+    href: "/forced-tx",
+    icon: <BugAntIcon className="h-4 w-4" />,
+  },
 ];
 
 export const HeaderMenuLinks = () => {

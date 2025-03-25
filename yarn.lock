@@ -1245,10 +1245,68 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@inquirer/core@npm:^10.1.9":
+  version: 10.1.9
+  resolution: "@inquirer/core@npm:10.1.9"
+  dependencies:
+    "@inquirer/figures": ^1.0.11
+    "@inquirer/type": ^3.0.5
+    ansi-escapes: ^4.3.2
+    cli-width: ^4.1.0
+    mute-stream: ^2.0.0
+    signal-exit: ^4.1.0
+    wrap-ansi: ^6.2.0
+    yoctocolors-cjs: ^2.1.2
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 564ab1ef59b0f22e129051480205964a2b8f90fb1908ae73d08ce18c2d3a6bd0de35aed54f4f1a87e1d6a34144b288cfc0e93127b09f00145b681a4bc3f49534
+  languageName: node
+  linkType: hard
+
 "@inquirer/figures@npm:^1.0.10":
   version: 1.0.10
   resolution: "@inquirer/figures@npm:1.0.10"
   checksum: bf3b86e55bce1d32f6ec0cb9413a10fe9a3aa2757071e45e46b26011bfb69b001b31da2b1e0c6b97be424df1f32047402a03e3234cda4c9a433ea122f1b0ad73
+  languageName: node
+  linkType: hard
+
+"@inquirer/figures@npm:^1.0.11":
+  version: 1.0.11
+  resolution: "@inquirer/figures@npm:1.0.11"
+  checksum: 6be2867050f5c179d9fcc389a4a3e9aca6ac45fd02106918eba2d6c27a7251a48693ac13fcf9f084e25bf963eb51045c23ca9e87c523e318b0e286d4173449a9
+  languageName: node
+  linkType: hard
+
+"@inquirer/input@npm:^4.1.8":
+  version: 4.1.8
+  resolution: "@inquirer/input@npm:4.1.8"
+  dependencies:
+    "@inquirer/core": ^10.1.9
+    "@inquirer/type": ^3.0.5
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 5f3688edede6eafabf3b29a8bcdaeac279e40edf93903b9f6e6945d42b781294ee906493ee765e133717525d44ea2fc9044eed1c58910ec9186eae5e077b4b06
+  languageName: node
+  linkType: hard
+
+"@inquirer/number@npm:^3.0.11":
+  version: 3.0.11
+  resolution: "@inquirer/number@npm:3.0.11"
+  dependencies:
+    "@inquirer/core": ^10.1.9
+    "@inquirer/type": ^3.0.5
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: 2e34ee1d216bce7fa226621489f038202adc95cae0e1d5333ee6d9a9576f3478d5b2bb215c49af74c383d8b867b21f4b0a64e902e53184a5cc410ef9a53224a8
   languageName: node
   linkType: hard
 
@@ -1277,6 +1335,18 @@ __metadata:
     "@types/node":
       optional: true
   checksum: 64ec072d2725ee31586af65cf32f553f217978f7020011d049e663b45776ff8c72aefe18eb12ece46788eaef9b239fc3bd01edfbe1d07b9162cc97aae5c173fb
+  languageName: node
+  linkType: hard
+
+"@inquirer/type@npm:^3.0.5":
+  version: 3.0.5
+  resolution: "@inquirer/type@npm:3.0.5"
+  peerDependencies:
+    "@types/node": ">=18"
+  peerDependenciesMeta:
+    "@types/node":
+      optional: true
+  checksum: a2d2aeba1b7e2000c5cddbb289cbf7a751dcea924f6c4a732a6ec99cac98a668bcce23f98357e098855027e18113949a4fb31162e3b3742775ab8e96cf59fb88
   languageName: node
   linkType: hard
 
@@ -2468,8 +2538,11 @@ __metadata:
   resolution: "@se-2/hardhat@workspace:packages/hardhat"
   dependencies:
     "@arbitrum/nitro-contracts": ^3.0.0
+    "@arbitrum/sdk": ^4.0.3
     "@ethersproject/abi": ~5.7.0
     "@ethersproject/providers": ~5.7.2
+    "@inquirer/input": ^4.1.8
+    "@inquirer/number": ^3.0.11
     "@inquirer/password": ^4.0.2
     "@nomicfoundation/hardhat-chai-matchers": ~2.0.7
     "@nomicfoundation/hardhat-ethers": ~3.0.8
@@ -2481,6 +2554,7 @@ __metadata:
     "@typechain/hardhat": ~9.1.0
     "@types/eslint": ~8.56.12
     "@types/mocha": ~10.0.8
+    "@types/node-fetch": ^2.6.12
     "@types/prettier": ~3.0.0
     "@types/qrcode": ~1.5.5
     "@typescript-eslint/eslint-plugin": ~8.8.1
@@ -2492,10 +2566,12 @@ __metadata:
     eslint-config-prettier: ~8.10.0
     eslint-plugin-prettier: ~5.2.1
     ethers: ~6.13.2
+    ethers-arbitrum: "npm:ethers@^5.1.0"
     hardhat: ~2.22.10
     hardhat-deploy: ~0.12.4
     hardhat-deploy-ethers: ~0.4.2
     hardhat-gas-reporter: ^2.2.2
+    node-fetch: 2
     prettier: ~3.3.3
     prettier-plugin-solidity: ~1.4.1
     qrcode: ~1.5.4
@@ -2523,7 +2599,7 @@ __metadata:
     abitype: 1.0.6
     autoprefixer: ~10.4.20
     blo: ~1.2.0
-    burner-connector: 0.0.9
+    burner-connector: 0.0.11
     daisyui: 4.12.10
     eslint: ~8.57.1
     eslint-config-next: ~14.2.15
@@ -3087,6 +3163,16 @@ __metadata:
   version: 2.1.0
   resolution: "@types/ms@npm:2.1.0"
   checksum: 532d2ebb91937ccc4a89389715e5b47d4c66e708d15942fe6cc25add6dc37b2be058230a327dd50f43f89b8b6d5d52b74685a9e8f70516edfc9bdd6be910eff4
+  languageName: node
+  linkType: hard
+
+"@types/node-fetch@npm:^2.6.12":
+  version: 2.6.12
+  resolution: "@types/node-fetch@npm:2.6.12"
+  dependencies:
+    "@types/node": "*"
+    form-data: ^4.0.0
+  checksum: 9647e68f9a125a090220c38d77b3c8e669c488658ae7506f1b4f9568214beba087624b1705bba1dc76649a65281ce3fd5b400e15266cbef8088027fb88777557
   languageName: node
   linkType: hard
 
@@ -5167,14 +5253,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"burner-connector@npm:0.0.9":
-  version: 0.0.9
-  resolution: "burner-connector@npm:0.0.9"
+"burner-connector@npm:0.0.11":
+  version: 0.0.11
+  resolution: "burner-connector@npm:0.0.11"
   dependencies:
     "@rainbow-me/rainbowkit": 2.1.0
     "@wagmi/core": 2.10.2
     viem: 2.10.9
-  checksum: 56e1ad732c30c60aff2b24384ce92b8ae9c12a2719341a64b6790848ba135e2a568c0fa6706fe09acbac73d2cddd1f0e4b1fae1bc665e71f68997733ac72e02c
+  checksum: 026fad51daacf4b9f8b6a5fafc3d2b20c14a4be5f29d3933c713dec247b122a78b544c552bedefc99b0f89ef74f0ddf78d3fec06b951b35e7ea251675dd5c1ef
   languageName: node
   linkType: hard
 
@@ -7379,7 +7465,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.1.0":
+"ethers-arbitrum@npm:ethers@^5.1.0, ethers@npm:^5.1.0":
   version: 5.8.0
   resolution: "ethers@npm:5.8.0"
   dependencies:
@@ -10487,6 +10573,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:2, node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
+  version: 2.7.0
+  resolution: "node-fetch@npm:2.7.0"
+  dependencies:
+    whatwg-url: ^5.0.0
+  peerDependencies:
+    encoding: ^0.1.0
+  peerDependenciesMeta:
+    encoding:
+      optional: true
+  checksum: d76d2f5edb451a3f05b15115ec89fc6be39de37c6089f1b6368df03b91e1633fd379a7e01b7ab05089a25034b2023d959b47e59759cb38d88341b2459e89d6e5
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:2.6.7":
   version: 2.6.7
   resolution: "node-fetch@npm:2.6.7"
@@ -10512,20 +10612,6 @@ __metadata:
     encoding:
       optional: true
   checksum: acb04f9ce7224965b2b59e71b33c639794d8991efd73855b0b250921382b38331ffc9d61bce502571f6cc6e11a8905ca9b1b6d4aeb586ab093e2756a1fd190d0
-  languageName: node
-  linkType: hard
-
-"node-fetch@npm:^2.6.7, node-fetch@npm:^2.7.0":
-  version: 2.7.0
-  resolution: "node-fetch@npm:2.7.0"
-  dependencies:
-    whatwg-url: ^5.0.0
-  peerDependencies:
-    encoding: ^0.1.0
-  peerDependenciesMeta:
-    encoding:
-      optional: true
-  checksum: d76d2f5edb451a3f05b15115ec89fc6be39de37c6089f1b6368df03b91e1633fd379a7e01b7ab05089a25034b2023d959b47e59759cb38d88341b2459e89d6e5
   languageName: node
   linkType: hard
 

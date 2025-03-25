@@ -1,0 +1,39 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "@arbitrum/nitro-contracts/src/precompiles/ArbAddressTable.sol": {
+      "content": "// Copyright 2021-2022, Offchain Labs, Inc.\n// For license information, see https://github.com/OffchainLabs/nitro-contracts/blob/main/LICENSE\n// SPDX-License-Identifier: BUSL-1.1\n\npragma solidity >=0.4.21 <0.9.0;\n\n/**\n * @title Allows registering / retrieving addresses at uint indices, saving calldata.\n * @notice Precompiled contract that exists in every Arbitrum chain at 0x0000000000000000000000000000000000000066.\n */\ninterface ArbAddressTable {\n    /**\n     * @notice Check whether an address exists in the address table\n     * @param addr address to check for presence in table\n     * @return true if address is in table\n     */\n    function addressExists(\n        address addr\n    ) external view returns (bool);\n\n    /**\n     * @notice compress an address and return the result\n     * @param addr address to compress\n     * @return compressed address bytes\n     */\n    function compress(\n        address addr\n    ) external returns (bytes memory);\n\n    /**\n     * @notice read a compressed address from a bytes buffer\n     * @param buf bytes buffer containing an address\n     * @param offset offset of target address\n     * @return resulting address and updated offset into the buffer (revert if buffer is too short)\n     */\n    function decompress(\n        bytes calldata buf,\n        uint256 offset\n    ) external view returns (address, uint256);\n\n    /**\n     * @param addr address to lookup\n     * @return index of an address in the address table (revert if address isn't in the table)\n     */\n    function lookup(\n        address addr\n    ) external view returns (uint256);\n\n    /**\n     * @param index index to lookup address\n     * @return address at a given index in address table (revert if index is beyond end of table)\n     */\n    function lookupIndex(\n        uint256 index\n    ) external view returns (address);\n\n    /**\n     * @notice Register an address in the address table\n     * @param addr address to register\n     * @return index of the address (existing index, or newly created index if not already registered)\n     */\n    function register(\n        address addr\n    ) external returns (uint256);\n\n    /**\n     * @return size of address table (= first unused index)\n     */\n    function size() external view returns (uint256);\n}\n"
+    },
+    "contracts/ArbAddressTableExample.sol": {
+      "content": "//SPDX-License-Identifier: MIT\npragma solidity >=0.8.0 <0.9.0;\n\n// Arbitrum precompile contract for address table\nimport \"@arbitrum/nitro-contracts/src/precompiles/ArbAddressTable.sol\";\n\n/**\n * A smart contract that allows changing a state variable of the contract and tracking the changes\n * It also allows the owner to withdraw the Ether in the contract\n * @author BuidlGuidl\n */\ncontract ArbAddressTableExample {\n    // State Variables\n    mapping(address => uint) public userBalances;\n    ArbAddressTable arbAddressTable;\n\n    // Events: a way to emit log statements from smart contract that can be listened to by external parties\n    event MessageSent(address indexed sender, address indexed recipient, string message, uint256 value);\n\n    // Constructor: Called once on contract deployment\n    // Check packages/hardhat/deploy/00_deploy_your_contract.ts\n    constructor() {\n        // connect to precompiled address table contract\n        arbAddressTable = ArbAddressTable(address(102));\n    }\n\n    // Modifier: used to define a set of rules that must be met before or after a function is executed\n    // Check the withdraw() function\n    modifier isAddress(uint256 addressIndex) {\n        // retrieve address from address table\n        address addressFromTable = arbAddressTable.lookupIndex(addressIndex);\n        // msg.sender: predefined variable that represents address of the account that called the current function\n        require(msg.sender == addressFromTable, \"Not the authorized address\");\n        _;\n    }\n\n    function registerAddress(address _address) public returns (uint256) {\n        return arbAddressTable.register(_address);\n    }\n\n    function getAddressFromIndex(uint256 _index) public view returns (address) {\n        return arbAddressTable.lookupIndex(_index);\n    }\n\n    function getIndexFromAddress(address _address) public view returns (uint256) {\n        return arbAddressTable.lookup(_address);\n    }\n\n    /**\n     * Function that allows anyone to send a message to an address\n     *\n     * @param _message (string memory) - new message to send\n     * @param _addressIndex (uint256) - the index of the address to which the message will be sent\n     */\n    function sendMessageToAddress(string memory _message, uint256 _addressIndex) public payable {\n        // Print data to the hardhat chain console. Remove when deploying to a live network.\n        address _recipient = arbAddressTable.lookupIndex(_addressIndex);\n\n        // msg.value: built-in global variable that represents the amount of ether sent with the transaction\n        if (msg.value > 0) {\n            // Add value to the recipients balance\n            userBalances[_recipient] += msg.value;\n        } \n\n        // emit: keyword used to trigger an event\n        emit MessageSent(msg.sender, _recipient, _message, msg.value);\n    }\n\n    /**\n     * Function that allows the owner to withdraw all the Ether in the contract\n     * The function can only be called by the owner of the contract as defined by the isOwner modifier\n     */\n    function withdraw() public {\n        uint256 usersBalance = userBalances[msg.sender];\n        require(usersBalance > 0, \"No balance to withdraw\");\n        userBalances[msg.sender] = 0;\n        (bool success, ) = msg.sender.call{ value: userBalances[msg.sender] }(\"\");\n        require(success, \"Failed to send Ether\");\n    }\n\n    /**\n     * Function that allows the contract to receive ETH\n     */\n    receive() external payable {}\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": true,
+      "runs": 200
+    },
+    "evmVersion": "paris",
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}

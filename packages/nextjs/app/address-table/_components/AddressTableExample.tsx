@@ -41,7 +41,7 @@ export default function AddressTableExample() {
   // Get address index
   const { data: addressIndexData } = useScaffoldReadContract({
     contractName: "ArbAddressTableExample",
-    functionName: "getAddressIndex",
+    functionName: "getIndexFromAddress",
     args: [addressToGetIndex],
   });
 
