@@ -10,8 +10,16 @@ import {
 import { rainbowkitBurnerWallet } from "burner-connector";
 import * as chains from "viem/chains";
 import scaffoldConfig from "~~/scaffold.config";
+import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
 
 const { onlyLocalBurnerWallet, targetNetworks } = scaffoldConfig;
+rainbowkitBurnerWallet.rpcUrls = targetNetworks.reduce(
+  (acc, network) => {
+    acc[network.id] = getAlchemyHttpUrl(network.id) || "";
+    return acc;
+  },
+  {} as Record<number, string>,
+);
 
 const wallets = [
   metaMaskWallet,

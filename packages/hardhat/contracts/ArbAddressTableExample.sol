@@ -38,7 +38,11 @@ contract ArbAddressTableExample {
         return arbAddressTable.register(_address);
     }
 
-    function getAddressIndex(address _address) public view returns (uint256) {
+    function getAddressFromIndex(uint256 _index) public view returns (address) {
+        return arbAddressTable.lookupIndex(_index);
+    }
+
+    function getIndexFromAddress(address _address) public view returns (uint256) {
         return arbAddressTable.lookup(_address);
     }
 

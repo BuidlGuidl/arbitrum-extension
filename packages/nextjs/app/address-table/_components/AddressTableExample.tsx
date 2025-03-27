@@ -7,7 +7,7 @@ import { useScaffoldEventHistory, useScaffoldReadContract, useScaffoldWriteContr
 
 const DEPLOYED_ON_BLOCK = 12960000n;
 
-export default function ArbAddressTableComponent() {
+export default function AddressTableExample() {
   const { address } = useAccount();
   const [message, setMessage] = useState("");
   const [addressToRegister, setAddressToRegister] = useState("");
@@ -41,7 +41,7 @@ export default function ArbAddressTableComponent() {
   // Get address index
   const { data: addressIndexData } = useScaffoldReadContract({
     contractName: "ArbAddressTableExample",
-    functionName: "getAddressIndex",
+    functionName: "getIndexFromAddress",
     args: [addressToGetIndex],
   });
 
