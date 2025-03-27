@@ -36,6 +36,7 @@ export default function TrackTransaction() {
   const chainId = useChainId();
   const [status, setStatus] = useState<TxStatus>(TxStatus.PENDING);
   const [elapsedTime, setElapsedTime] = useState(0);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [startTime, setStartTime] = useState(Date.now());
   const [forceCountdown, setForceCountdown] = useState(0); // 23:50 in seconds = 23*60*60 + 50*60 = 85800
   const [txReceipt, setTxReceipt] = useState<TransactionReceipt | null>(null);
@@ -272,7 +273,7 @@ export default function TrackTransaction() {
                     {l1BlockExplorerUrl ? (
                       <a
                         href={l1BlockExplorerUrl}
-                        target="_blank" 
+                        target="_blank"
                         rel="noopener noreferrer"
                         className="text-sm break-all text-primary hover:underline"
                       >

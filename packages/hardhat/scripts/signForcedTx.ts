@@ -66,6 +66,7 @@ async function main() {
         }
         recipientAddress = address;
         return true;
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
       } catch (error) {
         return "Invalid recipient index. You can add an address using the register method in the Address Table tab.";
       }

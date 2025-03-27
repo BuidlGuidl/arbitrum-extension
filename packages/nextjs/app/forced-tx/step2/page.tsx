@@ -6,7 +6,6 @@ import { InboxTools, getArbitrumNetwork } from "@arbitrum/sdk";
 import { providers } from "ethers";
 import { formatEther } from "viem";
 import { useAccount, useChainId, usePublicClient, useSwitchChain, useWalletClient } from "wagmi";
-import { useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 import scaffoldConfig from "~~/scaffold.config";
 import { clientToSigner } from "~~/utils/arbitrum/ethersAdapters";
 import { ARBITRUM_ONE, MAINNET, getL2ChainId, isChainL1 } from "~~/utils/arbitrum/utils";
