@@ -1,0 +1,5 @@
+{
+    "scripts": {
+        "sign-tx": "yarn workspace @se-2/hardhat sign-tx"
+    }
+}

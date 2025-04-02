@@ -1,0 +1,16 @@
+{
+    "scripts": {
+        "sign-tx": "hardhat run scripts/signForcedTx.ts"
+    },
+    "dependencies": {
+        "@arbitrum/nitro-contracts": "^3.0.0",
+        "@inquirer/input": "^4.1.8",
+        "@inquirer/number": "^3.0.11",
+        "node-fetch": "2"
+    },
+    "devDependencies": {
+        "@arbitrum/sdk": "^4.0.3",
+        "ethers-arbitrum": "npm:ethers@^5.1.0",
+        "@types/node-fetch": "^2.6.12"
+    }
+}
