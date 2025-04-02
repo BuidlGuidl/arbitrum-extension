@@ -8,10 +8,7 @@ Start by making these adjustments to the files in your project (temporary instru
 - Change 'targetNetworks' in 'scaffold.config.ts' to [chains.sepolia, chains.arbitrumSepolia]
 
 ## Using the Arbitrum Bridge
-Now you can launch the extension by running:
-\`\`\`bash
-yarn start
-\`\`\`
+Now you can launch the extension by running \`yarn start\`
 Open your browser and navigate to http://localhost:3000.
 Go to the 'Bridge' tab and follow the instructions to bridge some ETH from Sepolia to Arbitrum Sepolia.
 
