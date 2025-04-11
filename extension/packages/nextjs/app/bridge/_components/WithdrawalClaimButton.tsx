@@ -1,23 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useAccount, useChainId, useSwitchChain } from "wagmi";
-import { MAINNET, SEPOLIA, isChainL1 } from "~~/utils/arbitrum/utils";
+import { WithdrawalRecord } from "../page";
+import { ChildToParentMessageStatus, ChildTransactionReceipt } from "@arbitrum/sdk";
+import { providers } from "ethers";
+import { useAccount, useChainId, useSwitchChain, useWalletClient } from "wagmi";
+import scaffoldConfig from "~~/scaffold.config";
+import { clientToSigner } from "~~/utils/arbitrum/ethersAdapters";
+import { getL1ChainId, getL2ChainId, isChainL1 } from "~~/utils/arbitrum/utils";
 import { notification } from "~~/utils/scaffold-eth";
 
 interface WithdrawalClaimButtonProps {
-  timestamp: number;
-  withdrawerAddress: string;
+  withdrawRecord: WithdrawalRecord;
+  removeClaimedWithdrawal: (txHash: string) => void;
 }
 
 const WITHDRAWAL_WINDOW = 7 * 24 * 60 * 60 * 1000; // 7 days in milliseconds
 
-export default function WithdrawalClaimButton({ timestamp, withdrawerAddress }: WithdrawalClaimButtonProps) {
+export default function WithdrawalClaimButton({ withdrawRecord, removeClaimedWithdrawal }: WithdrawalClaimButtonProps) {
   const { address } = useAccount();
   const chainId = useChainId();
   const { switchChain } = useSwitchChain();
+  const { data: walletClient } = useWalletClient();
   const [timeLeft, setTimeLeft] = useState<string>("");
   const [canClaim, setCanClaim] = useState(false);
+
+  const { timestamp, withdrawerAddress } = withdrawRecord;
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -47,19 +55,50 @@ export default function WithdrawalClaimButton({ timestamp, withdrawerAddress }: 
   }, [timestamp]);
 
   const handleClaim = async () => {
-    if (!canClaim || !address || address.toLowerCase() !== withdrawerAddress.toLowerCase()) return;
+    if (!walletClient || !canClaim || !address || address.toLowerCase() !== withdrawerAddress.toLowerCase()) return;
 
+    let notificationId: string | undefined;
     try {
-      // TODO: Implement claim logic here
-      notification.success("Claim initiated");
+      const l1Signer = clientToSigner(walletClient);
+      // If mainnet, use Arbitrum One, otherwise use Arbitrum Sepolia
+      const l2ChainId = getL2ChainId(chainId);
+      // For L2, we'll use the RPC URL directly since we don't need signing capabilities
+      const l2Provider = new providers.JsonRpcProvider(
+        scaffoldConfig.targetNetworks.find(n => n.id === l2ChainId)?.rpcUrls.default.http[0],
+      );
+
+      if (!l2Provider) {
+        throw new Error("L2 network configuration not found");
+      }
+      const txReceipt = await l2Provider.getTransactionReceipt(withdrawRecord.txHash);
+
+      const transactionReceipt = new ChildTransactionReceipt(txReceipt);
+      const messages = await transactionReceipt.getChildToParentMessages(l1Signer);
+      const childToParentMessage = messages[0];
+      if ((await childToParentMessage.status(l2Provider)) == ChildToParentMessageStatus.EXECUTED) {
+        throw new Error(`Message already executed! Nothing else to do here`);
+      }
+      // This just makes sure the message is ready to be executed. It should be right away since the button isn't clickable until it's ready
+      const retryInterval = 1000 * 60;
+      await childToParentMessage.waitUntilReadyToExecute(l2Provider, retryInterval);
+      notificationId = notification.loading("Claiming...");
+      const executeTransaction = await childToParentMessage.execute(l2Provider);
+      await executeTransaction.wait();
+      notification.remove(notificationId);
+      notification.success("Withdrawal has been claimed!");
+      removeClaimedWithdrawal(withdrawRecord.txHash);
     } catch (error) {
       console.error("Claim error:", error);
       notification.error("Claim failed");
+    } finally {
+      if (notificationId) {
+        notification.remove(notificationId);
+      }
     }
   };
 
   const handleSwitchToL1 = async () => {
-    const l1ChainId = chainId === MAINNET ? MAINNET : SEPOLIA;
+    const l1ChainId = getL1ChainId(chainId);
     if (switchChain) {
       try {
         await switchChain({ chainId: l1ChainId });

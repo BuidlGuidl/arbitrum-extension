@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { providers } from "ethers";
 import { useRouter, useSearchParams } from "next/navigation";
-import { type Chain, type TransactionReceipt, createPublicClient, http } from "viem";
-import { useChainId } from "wagmi";
+import { type Chain, type TransactionReceipt, createPublicClient, http, Hash } from "viem";
+import { useChainId, useWalletClient } from "wagmi";
 import scaffoldConfig from "~~/scaffold.config";
 import { getL1ChainId, getL2ChainId, isChainL1 } from "~~/utils/arbitrum/utils";
 import { notification } from "~~/utils/scaffold-eth";
+import { getArbitrumNetwork, InboxTools } from "@arbitrum/sdk";
+import { clientToSigner } from "~~/utils/arbitrum";
 
 enum TxStatus {
   PENDING = "PENDING",
@@ -31,14 +34,14 @@ interface StoredTxData {
 export default function TrackTransaction() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { data: walletClient } = useWalletClient();
   const txHash = searchParams.get("txhash");
   const l1TxHashFromQuery = searchParams.get("l1txhash");
-  const chainId = useChainId();
+  const currentChainId = useChainId();
   const [status, setStatus] = useState<TxStatus>(TxStatus.PENDING);
   const [elapsedTime, setElapsedTime] = useState(0);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [startTime, setStartTime] = useState(Date.now());
-  const [forceCountdown, setForceCountdown] = useState(0); // 23:50 in seconds = 23*60*60 + 50*60 = 85800
+  const [forceCountdown, setForceCountdown] = useState(0);
   const [txReceipt, setTxReceipt] = useState<TransactionReceipt | null>(null);
   const [blockExplorerUrl, setBlockExplorerUrl] = useState<string | null>(null);
   const [l1BlockExplorerUrl, setL1BlockExplorerUrl] = useState<string | null>(null);
@@ -46,6 +49,26 @@ export default function TrackTransaction() {
   const [l2ChainName, setL2ChainName] = useState<string | null>(null);
   const [l1ChainName, setL1ChainName] = useState<string | null>(null);
   const [l1TxHash, setL1TxHash] = useState<string | null>(l1TxHashFromQuery);
+  let pollToastId: string | undefined;
+  let forceToastId: string | undefined;
+
+  // Get the appropriate L2 network based on the current chain ID
+  const l2ChainId = useMemo(() =>
+    !isChainL1(currentChainId) ? currentChainId : getL2ChainId(currentChainId)
+  , [currentChainId]);
+
+  const l2Network = useMemo(() =>
+    scaffoldConfig.targetNetworks.find(n => n.id === l2ChainId)
+  , [l2ChainId]);
+
+  // Create L2 viem client, memoized based on l2Network
+  const l2Client = useMemo(() => {
+    if (!l2Network) return null;
+    return createPublicClient({
+      transport: http(l2Network.rpcUrls.default.http[0]),
+      chain: l2Network as unknown as Chain,
+    });
+  }, [l2Network]);
 
   useEffect(() => {
     if (!txHash) {
@@ -69,47 +92,43 @@ export default function TrackTransaction() {
       }
     }
 
-    // Get the appropriate L2 network
-    const l2ChainId = !isChainL1(chainId) ? chainId : getL2ChainId(chainId);
-    const l2Network = scaffoldConfig.targetNetworks.find(n => n.id === l2ChainId);
-    if (!l2Network) {
-      notification.error("Could not determine L2 network");
-      return;
-    }
-
     // Get the corresponding L1 network
     const l1ChainId = getL1ChainId(l2ChainId);
     const l1Network = scaffoldConfig.targetNetworks.find(n => n.id === l1ChainId);
 
     // Set chain names
-    setL2ChainName(l2Network.name);
-    if (l1Network) {
-      setL1ChainName(l1Network.name);
-    }
+    setL2ChainName(l2Network?.name ?? null);
+    setL1ChainName(l1Network?.name ?? null);
 
     // Set block explorer URLs
-    if (l2Network.blockExplorers?.default) {
+    if (l2Network?.blockExplorers?.default) {
       setBlockExplorerUrl(`${l2Network.blockExplorers.default.url}/tx/${txHash}`);
     }
 
-    if (l1Network?.blockExplorers?.default && l1TxHash) {
+    if (l1TxHash && l1Network?.blockExplorers?.default) {
       setL1BlockExplorerUrl(`${l1Network.blockExplorers.default.url}/tx/${l1TxHash}`);
     }
-
-    // Create L2 viem client
-    const l2Client = createPublicClient({
-      transport: http(l2Network.rpcUrls.default.http[0]),
-      chain: l2Network as unknown as Chain,
-    });
 
     // Function to check transaction status
     const checkTxStatus = async () => {
       try {
+        if (!pollToastId) {
+          pollToastId = notification.loading(`Checking L2 tx status on ${l2Network?.name}...`);
+        }
+
+        // Ensure client is available before proceeding
+        if (!l2Client) {
+          // No need for error here, client creation error is handled above by useMemo dependency
+          // Just prevent polling if client isn't ready
+          return false; // Indicate polling should not continue/stop if running
+        }
+
         const receipt = await l2Client.getTransactionReceipt({
-          hash: txHash as `0x${string}`,
+          hash: txHash as Hash,
         });
 
         if (receipt) {
+          if (pollToastId) notification.remove(pollToastId);
           setTxReceipt(receipt);
           if (receipt.status === "success") {
             setStatus(TxStatus.CONFIRMED);
@@ -119,13 +138,15 @@ export default function TrackTransaction() {
             return true; // Stop polling
           } else if (receipt.status === "reverted") {
             setStatus(TxStatus.FAILED);
-            notification.error("Transaction failed on L2");
+            notification.error(`Transaction failed on ${l2ChainName || 'L2'}`);
             return true; // Stop polling
           }
         }
 
         // If it's been more than 10 minutes (600 seconds) and we're still pending, start the force countdown
         if (elapsedTime > 600 && status === TxStatus.PENDING) {
+          if (pollToastId) notification.remove(pollToastId);
+          notification.warning("Transaction not found after 10 minutes. Starting force countdown.");
           setStatus(TxStatus.FORCE_COUNTDOWN);
           setForceCountdown(23 * 60 * 60 + 50 * 60); // 23:50 in seconds
           return true; // Stop this polling and let the countdown polling take over
@@ -133,10 +154,13 @@ export default function TrackTransaction() {
 
         return false; // Continue polling
       } catch (error) {
-        console.error("Error checking transaction status:", error);
+        // Don't clear loading here, let polling continue unless time limit hit
+        console.log("Transaction not found, will try again:", error);
 
         // If it's been more than 10 minutes (600 seconds), start force countdown
         if (elapsedTime > 600) {
+          if (pollToastId) notification.remove(pollToastId);
+          notification.warning("Transaction was not processed after 10 minutes. Starting countdown until you can force the transaction from L1.");
           setStatus(TxStatus.FORCE_COUNTDOWN);
           setForceCountdown(23 * 60 * 60 + 50 * 60); // 23:50 in seconds
           return true; // Stop this polling and let the countdown polling take over
@@ -148,17 +172,21 @@ export default function TrackTransaction() {
 
     // Initial check for normal transaction polling
     if (status === TxStatus.PENDING) {
-      checkTxStatus();
 
       // Set up polling interval (every 5 seconds)
       const interval = setInterval(async () => {
         const shouldStop = await checkTxStatus();
         if (shouldStop) {
+          if (pollToastId) notification.remove(pollToastId);
           clearInterval(interval);
         }
       }, 5000);
 
-      return () => clearInterval(interval);
+      // Cleanup function
+      return () => {
+        clearInterval(interval);
+        if (pollToastId) notification.remove(pollToastId);
+      };
     }
 
     // For the force countdown status, we need different logic
@@ -169,6 +197,7 @@ export default function TrackTransaction() {
           if (prevCountdown <= 1) {
             clearInterval(countdownInterval);
             setStatus(TxStatus.READY_TO_FORCE);
+            notification.warning("Ready to force transaction!");
             return 0;
           }
           return prevCountdown - 1;
@@ -177,7 +206,13 @@ export default function TrackTransaction() {
 
       return () => clearInterval(countdownInterval);
     }
-  }, [txHash, chainId, router, status, l1TxHash, l1TxHashFromQuery, elapsedTime, startTime]);
+
+    // Clear notifications on unmount regardless of status
+    return () => {
+      if (pollToastId) notification.remove(pollToastId);
+      if (forceToastId) notification.remove(forceToastId);
+    };
+  }, [txHash, currentChainId, router, status, l1TxHash, l1TxHashFromQuery, elapsedTime, startTime, l2ChainName, l2Client]);
 
   // Add a separate useEffect to handle the elapsed time counter
   useEffect(() => {
@@ -205,27 +240,46 @@ export default function TrackTransaction() {
   };
 
   const handleForceTransaction = async () => {
+    if (!walletClient) return;
     setIsForcing(true);
+    forceToastId = notification.loading("Submitting force transaction request...");
     try {
       // Retrieve the stored transaction from localStorage
       const storedTx = localStorage.getItem("forcedTx");
       if (!storedTx) {
+        if (forceToastId) notification.remove(forceToastId);
         notification.error("No transaction data found to force");
         setIsForcing(false);
         return;
       }
 
-      // Here you would implement the logic to force the transaction
-      // This might involve direct communication with the L2 node or a specialized service
+      // Convert viem/wagmi clients to ethers providers/signers
+      const l1Signer = clientToSigner(walletClient);
+      // For L2, we'll use the RPC URL directly since we don't need signing capabilities
+      const l2Provider = new providers.JsonRpcProvider(
+        scaffoldConfig.targetNetworks.find(n => n.id === l2ChainId)?.rpcUrls.default.http[0],
+      );
+
+      // Get the Arbitrum network configuration
+      const childChainNetwork = await getArbitrumNetwork(l2Provider);
+      const inboxTools = new InboxTools(l1Signer, childChainNetwork);
+      const forceInclusionTx = await inboxTools.forceInclude();
+      // If the transaction is not returned, it means it was already included
+      await forceInclusionTx?.wait();
 
       notification.success("Transaction force request submitted");
-      // After a successful force request, redirect back to checking status
+      // Reset state to start polling again after forcing
       setStatus(TxStatus.PENDING);
       setElapsedTime(0);
+      setStartTime(Date.now()); // Reset timer
+      setForceCountdown(0);
     } catch (error) {
       console.error("Error forcing transaction:", error);
+      if (forceToastId) notification.remove(forceToastId);
       notification.error("Failed to force transaction");
     } finally {
+      // Ensure loading notification is removed
+      if (forceToastId) notification.remove(forceToastId);
       setIsForcing(false);
     }
   };
@@ -233,7 +287,7 @@ export default function TrackTransaction() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Track Forced Transaction</h1>
-      <div className="card bg-base-200 shadow-xl">
+      <div className="card bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">
             Transaction Status:{" "}
@@ -260,9 +314,9 @@ export default function TrackTransaction() {
               <h3 className="font-bold mb-2">Transaction Details:</h3>
 
               <div className="bg-base-100 p-3 rounded-lg mb-4">
-                <p className="flex items-center font-medium text-info">
+                <p className="flex items-center font-medium">
                   This transaction was submitted on {l1ChainName || "L1"} in Arbitrum&apos;s Delayed Inbox contract but
-                  will be executed on {l2ChainName || "L2"}
+                  will be executed on {l2ChainName || "L2"} when it is either picked up by the sequencer or forced to be included after waiting 24 hours.
                 </p>
               </div>
 
@@ -287,7 +341,7 @@ export default function TrackTransaction() {
                 {l1ChainName && (
                   <div>
                     <span className="font-medium">L1 Chain:</span>{" "}
-                    <span className="text-info font-medium">{l1ChainName}</span>
+                    <span className=" font-medium">{l1ChainName}</span>
                   </div>
                 )}
                 <div className="pt-2 border-t border-base-200">
@@ -308,7 +362,7 @@ export default function TrackTransaction() {
                 {l2ChainName && (
                   <div>
                     <span className="font-medium">L2 Chain:</span>{" "}
-                    <span className="text-info font-medium">{l2ChainName}</span>
+                    <span className=" font-medium">{l2ChainName}</span>
                   </div>
                 )}
                 <div className="flex flex-wrap flex-col gap-2 mt-4">
@@ -343,22 +397,10 @@ export default function TrackTransaction() {
                   )}
                   {txReceipt && (
                     <div className="flex">
-                      <span className="font-medium">Block Number:</span> {txReceipt.blockNumber.toLocaleString()}
+                      <span className="font-medium">Block Number: {txReceipt.blockNumber.toLocaleString()}</span>
                     </div>
                   )}
                 </div>
-
-                {status === TxStatus.PENDING && (
-                  <div className="mt-4">
-                    <p className="text-sm opacity-70">
-                      Waiting for the transaction to be confirmed on {l2ChainName || "L2"}. This may take some time as
-                      it needs to be processed through the Arbitrum Delayed Inbox on L1.
-                    </p>
-                    <div className="mt-2">
-                      <span className="loading loading-spinner loading-md"></span>
-                    </div>
-                  </div>
-                )}
 
                 {status === TxStatus.FORCE_COUNTDOWN && (
                   <div className="alert alert-warning mt-4">
@@ -388,18 +430,6 @@ export default function TrackTransaction() {
                         "Force Transaction"
                       )}
                     </button>
-                  </div>
-                )}
-
-                {status === TxStatus.CONFIRMED && (
-                  <div className="alert alert-success mt-4">
-                    <span>Transaction has been confirmed on {l2ChainName || "L2"}!</span>
-                  </div>
-                )}
-
-                {status === TxStatus.FAILED && (
-                  <div className="alert alert-error mt-4">
-                    <span>Transaction failed on {l2ChainName || "L2"}. Please check the transaction details.</span>
                   </div>
                 )}
               </div>
