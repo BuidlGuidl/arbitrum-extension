@@ -46,7 +46,7 @@ export default function ContractState({ startBlock }: ContractStateProps) {
     })) || [];
 
   return (
-    <div className="card bg-base-200 shadow-xl">
+    <div className="card bg-base-100 shadow-xl">
       <div className="card-body">
         <h2 className="card-title">Contract State</h2>
         <div className="flex flex-col gap-4">

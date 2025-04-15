@@ -1,7 +1,7 @@
 # Arbitrum Extension
 This extension can be used with 
 ```bash
-    npx create-eth -e BuidlGuidl/arbitrum-extension
+    npx create-eth@latest -e BuidlGuidl/arbitrum-extension
 ```
 
 
@@ -12,9 +12,9 @@ Start by making these adjustments to the files in your project (temporary instru
 
 ## Using the Arbitrum Bridge
 Now you can launch the extension by running:
-\`\`\`bash
-yarn start
-\`\`\`
+```bash
+    yarn start
+```
 Open your browser and navigate to http://localhost:3000.
 Go to the 'Bridge' tab and follow the instructions to bridge some ETH from Sepolia to Arbitrum Sepolia.
 

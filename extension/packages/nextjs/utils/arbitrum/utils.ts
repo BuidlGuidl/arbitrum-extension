@@ -15,3 +15,18 @@ export const getL1ChainId = (chainId: number) => {
 export const getL2ChainId = (chainId: number) => {
   return chainId === MAINNET ? ARBITRUM_ONE : ARBITRUM_SEPOLIA;
 };
+
+export const getNetworkName = (chainId: number) => {
+  switch (chainId) {
+    case ARBITRUM_ONE:
+      return "Arbitrum One";
+    case ARBITRUM_SEPOLIA:
+      return "Arbitrum Sepolia";
+    case MAINNET:
+      return "Mainnet";
+    case SEPOLIA:
+      return "Sepolia";
+    default:
+      return "Unknown Network";
+  }
+};

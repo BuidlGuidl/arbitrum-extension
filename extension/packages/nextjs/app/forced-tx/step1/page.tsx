@@ -65,7 +65,7 @@ export default function ForcedTxStep1() {
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Step 1: Sign L2 Transaction</h1>
-      <div className="card bg-base-200 shadow-xl">
+      <div className="card bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Sign Forced Transaction</h2>
           <div className="flex flex-col gap-4">

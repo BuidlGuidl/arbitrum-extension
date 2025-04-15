@@ -3,28 +3,28 @@
 import { useState } from "react";
 import { EthBridger, getArbitrumNetwork } from "@arbitrum/sdk";
 import { BigNumber, providers } from "ethers";
-import { parseEther } from "viem";
-import { useAccount, useChainId, usePublicClient, useSwitchChain, useWalletClient } from "wagmi";
+import { formatEther, parseEther } from "viem";
+import { useAccount, useBalance, useChainId, usePublicClient, useSwitchChain, useWalletClient } from "wagmi";
 import scaffoldConfig from "~~/scaffold.config";
 import { clientToSigner } from "~~/utils/arbitrum/ethersAdapters";
-import { ARBITRUM_ONE, getL1ChainId, getL2ChainId, isChainL1 } from "~~/utils/arbitrum/utils";
+import { ARBITRUM_ONE, getL1ChainId, getL2ChainId, getNetworkName, isChainL1 } from "~~/utils/arbitrum/utils";
 import { notification } from "~~/utils/scaffold-eth";
 
 export default function NativeDeposit() {
   const { address } = useAccount();
   const chainId = useChainId();
+  const { data: balanceData } = useBalance({ address });
   const publicClient = usePublicClient();
   const { data: walletClient } = useWalletClient();
   const { switchChain } = useSwitchChain();
   const [amount, setAmount] = useState("");
   const [isDepositing, setIsDepositing] = useState(false);
-  const [depositStatus, setDepositStatus] = useState<string>("");
 
   // Check if current chain is an L2
   const isL2Chain = !isChainL1(chainId);
+  const l1ChainId = getL1ChainId(chainId);
 
   const handleSwitchToL1 = async () => {
-    const l1ChainId = getL1ChainId(chainId);
     if (l1ChainId && switchChain) {
       try {
         await switchChain({ chainId: l1ChainId });
@@ -37,10 +37,10 @@ export default function NativeDeposit() {
 
   const handleDeposit = async () => {
     if (!address || !publicClient || !walletClient || !amount) return;
-
+    let loadingNotifId: string | undefined;
     try {
       setIsDepositing(true);
-      setDepositStatus("Initiating deposit...");
+      loadingNotifId = notification.loading("Initiating deposit...");
 
       // Convert viem/wagmi clients to ethers providers/signers
       const l1Signer = clientToSigner(walletClient);
@@ -60,50 +60,50 @@ export default function NativeDeposit() {
       const childChainNetwork = await getArbitrumNetwork(l2Provider);
       const ethBridger = new EthBridger(childChainNetwork);
 
-      // Get initial balance
-      setDepositStatus("Checking initial balance...");
-
       // Create deposit transaction
       const depositTx = await ethBridger.deposit({
         amount: BigNumber.from(parseEther(amount).toString()),
         parentSigner: l1Signer,
       });
-
-      setDepositStatus("Waiting for L1 confirmation...");
+      notification.remove(loadingNotifId);
+      loadingNotifId = notification.loading("Waiting for L1 confirmation...");
       const depositReceipt = await depositTx.wait();
-
-      setDepositStatus("Waiting for L2 confirmation (this may take ~15 minutes)...");
+      notification.remove(loadingNotifId);
+      loadingNotifId = notification.loading("Waiting for L2 confirmation (this may take ~15 minutes)...");
       const l2Result = await depositReceipt.waitForChildTransactionReceipt(l2Provider);
 
       if (l2Result.complete) {
+        notification.remove(loadingNotifId);
         notification.success("Deposit Complete");
-        setDepositStatus("");
         setAmount("");
+        loadingNotifId = undefined;
       } else {
         throw new Error("Deposit failed on L2");
       }
     } catch (error) {
       console.error("Deposit error:", error);
-      notification.error("Deposit Failed");
-      setDepositStatus("");
+      notification.error(`Deposit Failed: ${error instanceof Error ? error.message : error}`);
     } finally {
       setIsDepositing(false);
+      if (loadingNotifId) {
+        notification.remove(loadingNotifId);
+      }
     }
   };
 
   if (isL2Chain) {
     return (
-      <div className="card bg-base-200 shadow-xl">
+      <div className="card bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Switch to L1 to Deposit</h2>
           <div className="flex flex-col gap-4">
-            <div className="alert alert-warning">
+            <div className="alert alert-warning my-4">
               <span>
                 You are currently on an L2 network. To deposit ETH, you need to be on the corresponding L1 network.
               </span>
             </div>
             <button className="btn btn-primary" onClick={handleSwitchToL1} disabled={!switchChain}>
-              Switch to {chainId === ARBITRUM_ONE ? "Mainnet" : "Sepolia"}
+              Switch to {getNetworkName(l1ChainId)}
             </button>
           </div>
         </div>
@@ -112,13 +112,18 @@ export default function NativeDeposit() {
   }
 
   return (
-    <div className="card bg-base-200 shadow-xl">
+    <div className="card bg-base-100 shadow-xl">
       <div className="card-body">
         <h2 className="card-title">Deposit ETH to Arbitrum</h2>
         <div className="flex flex-col gap-4">
           <div className="form-control">
             <label className="label">
               <span className="label-text">Amount (ETH)</span>
+              {balanceData && (
+                <span className="label-text-alt select-text">
+                  {Number(formatEther(balanceData.value)).toFixed(4)} {balanceData.symbol}
+                </span>
+              )}
             </label>
             <input
               type="number"
@@ -131,12 +136,6 @@ export default function NativeDeposit() {
               disabled={isDepositing}
             />
           </div>
-
-          {depositStatus && (
-            <div className="alert alert-info">
-              <span>{depositStatus}</span>
-            </div>
-          )}
 
           <button
             className="btn btn-primary"

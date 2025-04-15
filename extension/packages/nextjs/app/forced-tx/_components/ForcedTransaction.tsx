@@ -8,7 +8,7 @@ import { useAccount, useChainId, usePublicClient, useSwitchChain, useWalletClien
 import { useScaffoldContract } from "~~/hooks/scaffold-eth";
 import scaffoldConfig from "~~/scaffold.config";
 import { clientToSigner } from "~~/utils/arbitrum/ethersAdapters";
-import { ARBITRUM_ONE, MAINNET, getL2ChainId, isChainL1 } from "~~/utils/arbitrum/utils";
+import { getL1ChainId, getL2ChainId, getNetworkName, isChainL1 } from "~~/utils/arbitrum/utils";
 import { notification } from "~~/utils/scaffold-eth";
 
 interface ForcedTransactionProps {
@@ -33,11 +33,12 @@ export default function ForcedTransaction({ onTransactionSent }: ForcedTransacti
 
   // Check if current chain is an L1
   const isL1Chain = isChainL1(chainId);
+  const l1ChainId = getL1ChainId(chainId);
 
   const handleSwitchToL1 = async () => {
     if (switchChain) {
       try {
-        await switchChain({ chainId: MAINNET });
+        await switchChain({ chainId: l1ChainId });
       } catch (error) {
         console.error("Failed to switch network:", error);
         notification.error("Failed to switch network");
@@ -113,7 +114,7 @@ export default function ForcedTransaction({ onTransactionSent }: ForcedTransacti
 
   if (!isL1Chain) {
     return (
-      <div className="card bg-base-200 shadow-xl">
+      <div className="card bg-base-100 shadow-xl">
         <div className="card-body">
           <h2 className="card-title">Switch to L1 to Send Forced Transaction</h2>
           <div className="flex flex-col gap-4">
@@ -123,7 +124,7 @@ export default function ForcedTransaction({ onTransactionSent }: ForcedTransacti
               </span>
             </div>
             <button className="btn btn-primary" onClick={handleSwitchToL1} disabled={!switchChain}>
-              Switch to {chainId === ARBITRUM_ONE ? "Mainnet" : "Sepolia"}
+              Switch to {getNetworkName(l1ChainId)}
             </button>
           </div>
         </div>
@@ -132,7 +133,7 @@ export default function ForcedTransaction({ onTransactionSent }: ForcedTransacti
   }
   console.log(address, isProcessing, message, contract);
   return (
-    <div className="card bg-base-200 shadow-xl">
+    <div className="card bg-base-100 shadow-xl">
       <div className="card-body">
         <h2 className="card-title">Send Forced Transaction to L2</h2>
         <div className="flex flex-col gap-4">
