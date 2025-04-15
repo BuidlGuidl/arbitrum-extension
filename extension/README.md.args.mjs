@@ -2,11 +2,6 @@ export const skipQuickStart = true;
 
 export const extraContents = `# Arbitrum Extension
 
-## ⚠️ Before Getting Started
-Start by making these adjustments to the files in your project (temporary instructions):
-- Change the default network in 'packages/hardhat/hardhat.config.ts' to 'arbitrumSepolia'
-- Change 'targetNetworks' in 'scaffold.config.ts' to [chains.sepolia, chains.arbitrumSepolia]
-
 ## Using the Arbitrum Bridge
 Now you can launch the extension by running:
 \`\`\`bash
