@@ -1,1 +1,3 @@
-export const chainName = "sepolia";
+export const configOverrides = {
+    targetNetworks: ["$$chains.sepolia$$", "$$chains.arbitrumSepolia$$"],
+}
