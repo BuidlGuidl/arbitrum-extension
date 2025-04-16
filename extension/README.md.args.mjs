@@ -1,6 +1,7 @@
 export const skipQuickStart = true;
 
-export const extraContents = `# Arbitrum Extension
+// TODO: change back to extraContents
+export const extraContent = `# Arbitrum Extension
 
 ## Using the Arbitrum Bridge
 Now you can launch the extension by running:
