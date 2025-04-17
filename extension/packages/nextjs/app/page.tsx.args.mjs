@@ -1,4 +1,29 @@
-export const description = `
+export const fullContentOverride = `
+
+"use client";
+
+import { useAccount } from "wagmi";
+import { Address } from "~~/components/scaffold-eth";
+import type { NextPage } from "next";
+import Link from "next/link";
+
+const Home: NextPage = () => {
+  const { address: connectedAddress } = useAccount();
+
+  return (
+    <>
+      <div className="flex items-center flex-col flex-grow pt-10">
+        <div className="px-5">
+          <h1 className="text-center">
+            <span className="block text-2xl mb-2">Welcome to</span>
+            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
+            <span className="block text-xl font-bold">(Arbitrum Starter Kit extension)</span>
+          </h1>
+          <div className="flex justify-center items-center space-x-2 flex-col">
+            <p className="my-2 font-medium">Connected Address:</p>
+            <Address address={connectedAddress} />
+          </div>
+          
           <div className="flex flex-col max-w-3xl mt-4 bg-base-300 gap-2 p-4 justify-center items-center rounded-lg">
             <div className="flex flex-col gap-2 bg-base-100 pb-4 px-4 rounded-lg">
               <h2 className="text-2xl text-center mt-8">Welcome to the <b>Arbitrum Starter Kit</b> SE-2 Extension.</h2>
@@ -36,6 +61,12 @@ export const description = `
               </p>
             </div>
           </div>
-`;
 
-export const externalExtensionName = "Arbitrum Starter Kit";
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default Home;
+`;
