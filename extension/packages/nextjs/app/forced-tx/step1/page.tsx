@@ -7,11 +7,11 @@ import { notification } from "~~/utils/scaffold-eth";
 
 interface SignedTxData {
   signedTx: string;
-  message: string;
+  contractName: string;
+  functionName: string;
+  parameters: any[];
   contractAddress: string;
   value: string;
-  addressIndex: number;
-  recipientAddress: string;
   transactionHash: string;
 }
 
@@ -40,13 +40,7 @@ export default function ForcedTxStep1() {
   const handleProceedToStep2 = () => {
     if (signedTxData) {
       // Store transaction data in localStorage before navigating
-      localStorage.setItem(
-        "forcedTx",
-        JSON.stringify({
-          ...signedTxData,
-          addressIndex: signedTxData.addressIndex.toString(), // Convert to string to match what Step 2 expects
-        }),
-      );
+      localStorage.setItem('forcedTx', JSON.stringify(signedTxData));
       router.push("/forced-tx/step2");
     } else {
       notification.error("No signed transaction data available");
@@ -100,11 +94,16 @@ export default function ForcedTxStep1() {
                 <h3 className="font-bold mb-2">Signed Transaction Details:</h3>
                 <div className="space-y-2">
                   <div>
-                    <span className="font-medium">Message:</span> {signedTxData.message}
+                    <span className="font-medium">Contract:</span> {signedTxData.contractName}
                   </div>
                   <div>
-                    <span className="font-medium">Recipient Index:</span> {signedTxData.addressIndex} (
-                    {signedTxData.recipientAddress})
+                    <span className="font-medium">Function:</span> {signedTxData.functionName}
+                  </div>
+                  <div>
+                    <span className="font-medium">Parameters:</span>
+                    <pre className="text-sm mt-1 bg-base-200 p-2 rounded">
+                      {JSON.stringify(signedTxData.parameters, null, 2)}
+                    </pre>
                   </div>
                   <div>
                     <span className="font-medium">ETH Amount:</span>{" "}

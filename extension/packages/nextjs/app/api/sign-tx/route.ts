@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 
 interface SignedTxData {
   signedTx: string;
-  message: string;
+  contractName: string;
+  functionName: string;
+  parameters: any[];
   contractAddress: string;
   value: string;
-  addressIndex: number;
-  recipientAddress: string;
   transactionHash: string;
 }
 
