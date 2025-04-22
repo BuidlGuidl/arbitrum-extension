@@ -75,11 +75,9 @@ export default function ForcedTxStep1() {
                   </pre>
                 </li>
                 <li>
-                  We will use this script to sign a transaction that uses the ArbAddressTableExample contract to send a
-                  message. The real magic will happen in the next step when we take this signed L2 transaction and send
+                  We will use this script to sign a transaction that uses one of your deployed contracts. The real magic will happen in the next step when we take this signed L2 transaction and send
                   it through the Arbitrum Delayed Inbox contract on the L1 chain.
                 </li>
-                <li>Wait for the transaction to be signed and saved</li>
               </ol>
             </div>
 
@@ -131,7 +129,7 @@ export default function ForcedTxStep1() {
             )}
 
             <div className="text-sm opacity-70">
-              Note: Once you&apos;ve verified the transaction details, click the &quot;Proceed to Step 2&quot; button to
+              Note: After you have run the script, the transaction will appear here.Once you&apos;ve verified the transaction details, you will be able to click the &quot;Proceed to Step 2&quot; button to
               continue.
             </div>
           </div>
