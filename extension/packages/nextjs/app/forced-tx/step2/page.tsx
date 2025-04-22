@@ -12,12 +12,12 @@ import { getL1ChainId, getL2ChainId, getNetworkName, isChainL1 } from "~~/utils/
 import { notification } from "~~/utils/scaffold-eth";
 
 interface StoredTransaction {
-  signedTx: any;
-  message: string;
+  signedTx: string;
+  contractName: string;
+  functionName: string;
+  parameters: any[];
   contractAddress: string;
   value: string;
-  addressIndex: string;
-  recipientAddress: string;
   transactionHash: string;
 }
 
@@ -167,22 +167,24 @@ export default function ForcedTxStep2() {
             <div className="bg-base-300 p-4 rounded-lg">
               <h2 className="text-lg font-bold">L2 Transaction Details:</h2>
               <div className="mt-2">
-                <div className="font-medium">Contract Address:</div>
-                <div className="text-sm opacity-70">{storedTx.contractAddress} (ArbAddressTableExample Contract)</div>
+                <div className="font-medium">Contract:</div>
+                <div className="text-sm opacity-70">{storedTx.contractName} ({storedTx.contractAddress})</div>
               </div>
               <div className="mt-2">
-                <div className="font-medium">Recipient:</div>
-                <div className="text-sm opacity-70">
-                  Address Index: {storedTx.addressIndex} ({storedTx.recipientAddress})
-                </div>
+                <div className="font-medium">Function:</div>
+                <div className="text-sm opacity-70">{storedTx.functionName}</div>
               </div>
               <div className="mt-2">
-                <div className="font-medium">Message:</div>
-                <div className="text-sm opacity-70">{storedTx.message}</div>
+                <div className="font-medium">Parameters:</div>
+                <pre className="text-sm mt-1 bg-base-200 p-2 rounded">
+                  {JSON.stringify(storedTx.parameters, null, 2)}
+                </pre>
               </div>
               <div className="mt-2">
                 <div className="font-medium">ETH Amount:</div>
-                <div className="text-sm opacity-70">{formatEther(BigInt(storedTx.value))} ETH</div>
+                <div className="text-sm opacity-70">
+                  {storedTx.value === "0" ? "0" : `${formatEther(BigInt(storedTx.value))} ETH`}
+                </div>
               </div>
             </div>
 

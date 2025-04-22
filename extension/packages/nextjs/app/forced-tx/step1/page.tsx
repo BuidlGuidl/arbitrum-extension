@@ -7,11 +7,11 @@ import { notification } from "~~/utils/scaffold-eth";
 
 interface SignedTxData {
   signedTx: string;
-  message: string;
+  contractName: string;
+  functionName: string;
+  parameters: any[];
   contractAddress: string;
   value: string;
-  addressIndex: number;
-  recipientAddress: string;
   transactionHash: string;
 }
 
@@ -40,13 +40,7 @@ export default function ForcedTxStep1() {
   const handleProceedToStep2 = () => {
     if (signedTxData) {
       // Store transaction data in localStorage before navigating
-      localStorage.setItem(
-        "forcedTx",
-        JSON.stringify({
-          ...signedTxData,
-          addressIndex: signedTxData.addressIndex.toString(), // Convert to string to match what Step 2 expects
-        }),
-      );
+      localStorage.setItem('forcedTx', JSON.stringify(signedTxData));
       router.push("/forced-tx/step2");
     } else {
       notification.error("No signed transaction data available");
@@ -81,11 +75,9 @@ export default function ForcedTxStep1() {
                   </pre>
                 </li>
                 <li>
-                  We will use this script to sign a transaction that uses the ArbAddressTableExample contract to send a
-                  message. The real magic will happen in the next step when we take this signed L2 transaction and send
+                  We will use this script to sign a transaction that uses one of your deployed contracts. The real magic will happen in the next step when we take this signed L2 transaction and send
                   it through the Arbitrum Delayed Inbox contract on the L1 chain.
                 </li>
-                <li>Wait for the transaction to be signed and saved</li>
               </ol>
             </div>
 
@@ -100,11 +92,16 @@ export default function ForcedTxStep1() {
                 <h3 className="font-bold mb-2">Signed Transaction Details:</h3>
                 <div className="space-y-2">
                   <div>
-                    <span className="font-medium">Message:</span> {signedTxData.message}
+                    <span className="font-medium">Contract:</span> {signedTxData.contractName}
                   </div>
                   <div>
-                    <span className="font-medium">Recipient Index:</span> {signedTxData.addressIndex} (
-                    {signedTxData.recipientAddress})
+                    <span className="font-medium">Function:</span> {signedTxData.functionName}
+                  </div>
+                  <div>
+                    <span className="font-medium">Parameters:</span>
+                    <pre className="text-sm mt-1 bg-base-200 p-2 rounded">
+                      {JSON.stringify(signedTxData.parameters, null, 2)}
+                    </pre>
                   </div>
                   <div>
                     <span className="font-medium">ETH Amount:</span>{" "}
@@ -132,7 +129,7 @@ export default function ForcedTxStep1() {
             )}
 
             <div className="text-sm opacity-70">
-              Note: Once you&apos;ve verified the transaction details, click the &quot;Proceed to Step 2&quot; button to
+              Note: After you have run the script, the transaction will appear here.Once you&apos;ve verified the transaction details, you will be able to click the &quot;Proceed to Step 2&quot; button to
               continue.
             </div>
           </div>
