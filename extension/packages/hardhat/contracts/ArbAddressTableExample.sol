@@ -74,7 +74,7 @@ contract ArbAddressTableExample {
         uint256 usersBalance = userBalances[msg.sender];
         require(usersBalance > 0, "No balance to withdraw");
         userBalances[msg.sender] = 0;
-        (bool success, ) = msg.sender.call{ value: userBalances[msg.sender] }("");
+        (bool success, ) = msg.sender.call{ value: usersBalance }("");
         require(success, "Failed to send Ether");
     }
 
