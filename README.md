@@ -7,8 +7,6 @@ This extension can be used with
 
 This extension is meant to be used on testnets/mainnet networks. It will not be able to demonstrate Arbitrum's precompiles if you are running it on devnet (hardhat node). It defaults to using Sepolia and Arbitrum Sepolia as an L1<>L2 pair.
 
-To avoid front end errors, you should remove `chains.hardhat` from `targetNetworks` in the `scaffold.config.ts`.
-
 ## Using the Arbitrum Bridge
 Now you can launch the extension by running:
 ```bash
