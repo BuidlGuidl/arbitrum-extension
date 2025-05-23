@@ -1,4 +1,5 @@
 export const configOverrides = {
-    targetNetworks: ["$$chains.sepolia$$", "$$chains.arbitrumSepolia$$"],
-    skipLocalChainInTargetNetworks: true,
+    targetNetworks: ["$$chains.sepolia$$", "$$chains.arbitrumSepolia$$"]
 }
+
+export const skipLocalChainInTargetNetworks = true;
