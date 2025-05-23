@@ -3,17 +3,17 @@ export const extraMenuLinksObjects = [
   {
     label: "Bridge",
     href: "/bridge",
-    icon: '&&<Square3Stack3DIcon className="h-4 w-4" />$$',
+    icon: '$$<Square3Stack3DIcon className="h-4 w-4" />$$',
   },
   {
     label: "Address Table",
     href: "/address-table",
-    icon: '&&<TableCellsIcon className="h-4 w-4" />$$',
+    icon: '$$<TableCellsIcon className="h-4 w-4" />$$',
   },
   {
     label: "Forced Tx",
     href: "/forced-tx",
-    icon: '&&<ArrowRightEndOnRectangleIcon className="h-4 w-4" />$$',
+    icon: '$$<ArrowRightEndOnRectangleIcon className="h-4 w-4" />$$',
   }
 ];
 
