@@ -1,7 +1,6 @@
 export const skipQuickStart = true;
 
-// TODO: change back to extraContents
-export const extraContent = `# Arbitrum Extension
+export const extraContents = `# Arbitrum Extension
 
 ## Setup
 

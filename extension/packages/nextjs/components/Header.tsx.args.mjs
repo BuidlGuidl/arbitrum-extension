@@ -1,4 +1,4 @@
-export const preConfigContent = `import { TableCellsIcon, Square3Stack3DIcon, ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";`;
+export const preContent = `import { TableCellsIcon, Square3Stack3DIcon, ArrowRightEndOnRectangleIcon } from "@heroicons/react/24/outline";`;
 export const extraMenuLinksObjects = [
   {
     label: "Bridge",
