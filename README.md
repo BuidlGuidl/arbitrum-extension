@@ -1,7 +1,7 @@
 # Arbitrum Extension
 This extension can be used with 
 ```bash
-    npx create-eth@1.0.0-beta.4 -e BuidlGuidl/arbitrum-extension
+    npx create-eth@1.0.0-beta.4 -e BuidlGuidl/arbitrum-extension:main
 ```
 ## Setup
 
