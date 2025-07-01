@@ -129,7 +129,7 @@ export default function ForcedTxStep1() {
             )}
 
             <div className="text-sm opacity-70">
-              Note: After you have run the script, the transaction will appear here.Once you&apos;ve verified the transaction details, you will be able to click the &quot;Proceed to Step 2&quot; button to
+              Note: After you have run the script, the transaction will appear here. Once you&apos;ve verified the transaction details, you will be able to click the &quot;Proceed to Step 2&quot; button to
               continue.
             </div>
           </div>
