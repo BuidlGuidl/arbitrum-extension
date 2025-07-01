@@ -9,10 +9,10 @@ This extensionshowcases three **Arbitrum** specific abilities:
 
 ## Setup
 
-This extension is meant to be used on testnets/mainnet networks. It will not be able to demonstrate Arbitrum's precompiles if you are running it on a local Hardhat or Anvil node. It defaults to using Sepolia and Arbitrum Sepolia as an L1<>L2 pair. To use mainnet you can adjust the contract deployment framework to deploy to Arbitrum (\`packages/hardhat/hardhat.config\` change \`defaultNetwork\` to \`arbitrum\` or for Foundry change \`foundry.toml\` > \`default_network\` to match the RPC for Arbitrum). If you hit any hangups, read more in the [Official Scaffold-ETH Documentation](https://docs.scaffoldeth.io/deploying/deploy-smart-contracts).
+This extension is meant to be used on testnets/mainnet networks. It will not be able to demonstrate Arbitrum's precompiles if you are running it on a local Hardhat or Anvil(Foundry) node. It defaults to using Sepolia and Arbitrum Sepolia as an L1<>L2 pair. To use mainnet you can adjust the contract deployment framework to deploy to Arbitrum (\`packages/hardhat/hardhat.config\` change \`defaultNetwork\` to \`arbitrum\` or for Foundry change \`foundry.toml\` > \`default_network\` to match the RPC for Arbitrum). If you hit any hangups, read more in the [Official Scaffold-ETH Documentation](https://docs.scaffoldeth.io/deploying/deploy-smart-contracts).
 
 > [!NOTE]
-> If you are using the foundry version then you must go to the \`foundry.toml\` file and set \`default_network\` to the existing rpc string used for Arbitrum / Arbitrum Sepolia depending on if you are targeting mainnet or testnet. By default it is set to use a local node which will not work.
+> If you are using the Foundry version then you must go to the \`foundry.toml\` file and set \`default_network\` to the existing rpc string used for Arbitrum / Arbitrum Sepolia depending on if you are targeting mainnet or testnet. By default it is set to use a local node **which will not work**.
 
 ### Deploy Contract
 
