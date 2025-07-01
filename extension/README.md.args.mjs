@@ -2,27 +2,24 @@ export const skipQuickStart = true;
 
 export const extraContents = `# Arbitrum Extension
 
-This extensionshowcases three **Arbitrum** specific abilities:
+This extension showcases three **Arbitrum** specific abilities:
 - L1 <> L2 Bridging
 - The Address Table Precompile
 - Forcing a transaction from L1 onto L2
 
 ## Setup
 
-This extension is meant to be used on testnet/mainnet networks. It will not be able to demonstrate Arbitrum's precompiles if you are running it on a local Hardhat or Anvil(Foundry) node. It defaults to using Sepolia and Arbitrum Sepolia as an L1<>L2 pair. To use mainnet you can adjust the contract deployment framework to deploy to Arbitrum (\`packages/hardhat/hardhat.config\` change \`defaultNetwork\` to \`arbitrum\` or for Foundry change \`foundry.toml\` > \`default_network\` to match the RPC for Arbitrum). If you hit any hangups, read more in the [Official Scaffold-ETH Documentation](https://docs.scaffoldeth.io/deploying/deploy-smart-contracts).
-
-> [!NOTE]
-> If you are using the Foundry version then you must go to the \`foundry.toml\` file and set \`default_network\` to the existing rpc string used for Arbitrum / Arbitrum Sepolia depending on if you are targeting mainnet or testnet. By default it is set to use a local node **which will not work**.
+This extension is meant to be used on testnet/mainnet networks. It will not be able to demonstrate Arbitrum's precompiles if you are running it on a local Hardhat or Anvil(Foundry) node. It defaults to using Sepolia and Arbitrum Sepolia as an L1<>L2 pair. If you hit any hangups, read more in the [Official Scaffold-ETH Documentation](https://docs.scaffoldeth.io/deploying/deploy-smart-contracts).
 
 ### Deploy Contract
 
 Now in order to deploy you will need to either import a wallet that has funds on the L2 network with \`yarn account:import\` *or* create a new  wallet with \`yarn generate\` and then fund that wallet (You can view wallet details with \`yarn account\`).
 
-Once you have a deployer wallet setup with funds on the L2 network (Arbitrum or Arbitrum Sepolia depending on how you set things up) then you are ready to deploy to the chain with the \`yarn deploy\` command.
+Once you have a deployer wallet setup with funds on the L2 network (Arbitrum or Arbitrum Sepolia depending on how you set things up) then you are ready to deploy to the chain with the \`yarn deploy --network arbitrumSepolia\` command. If you are planning to interact with mainnet then instead of \`arbitrumSepolia\` use \`arbitrum\`).
 
 ### Start Front End
 
-If you adjusted the deployment from it's default (Sepolia and Arbitrum Sepolia) in the last step then you will need to update the front end by adjusting \`targetNetworks\` in \`packages/nextjs/scaffold.config.ts\` to be \`[chains.mainnet, chains.arbitrum]\`.
+If you adjusted the deployment from it's default testnet network pair (Sepolia and Arbitrum Sepolia) in the last step then you will need to update the front end by adjusting \`targetNetworks\` in \`packages/nextjs/scaffold.config.ts\` to be \`[chains.mainnet, chains.arbitrum]\`.
 
 Now you can start the front end by running \`yarn start\`. Then open your browser and navigate to http://localhost:3000. If you want more context you can read more in the [Official Scaffold-ETH Documentation](https://docs.scaffoldeth.io/quick-start/environment#3-launch-your-nextjs-application).
 
