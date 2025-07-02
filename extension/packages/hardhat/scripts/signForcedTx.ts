@@ -11,17 +11,14 @@ import { config } from "hardhat";
 import { HttpNetworkUserConfig } from "hardhat/types";
 import fetch from "node-fetch";
 
-// Stop the script if the default network is localhost
-const isLocalhost = config.defaultNetwork === "localhost";
-if (isLocalhost) {
-  console.log(
-    "🚫️ You must switch the default network to Arbitrum Sepolia or Arbitrum One in packages/hardhat/hardhat.config.ts. Try again once you have made the change.",
-  );
-  process.exit(1);
-}
-
-// If arbitrum mainnet is the default then we can deduce that the L1 is ETH mainnet otherwise it's ETH sepolia
-const isMainnet = config.defaultNetwork === "arbitrum";
+// Determine if we're on mainnet or testnet based on available networks
+const isMainnet = await select({
+  message: "Are you using testnet or mainnet?",
+  choices: [
+    { name: "testnet (Sepolia <> Arbitrum Sepolia)", value: false },
+    { name: "mainnet (Ethereum <> Arbitrum)", value: true },
+  ],
+});
 const networks = config.networks as { [key: string]: HttpNetworkUserConfig };
 const l1Provider = isMainnet
   ? new providers.JsonRpcProvider(networks.mainnet.url)
