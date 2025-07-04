@@ -1,5 +1,6 @@
 {
     "scripts": {
-        "sign-tx": "yarn workspace @se-2/hardhat sign-tx"
+        "hardhat:sign-tx": "yarn workspace @se-2/hardhat sign-tx",
+        "foundry:sign-tx": "yarn workspace @se-2/foundry sign-tx"
     }
 }

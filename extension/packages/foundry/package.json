@@ -1,0 +1,15 @@
+{
+    "scripts": {
+        "sign-tx": "node scripts-js/signForcedTx.js"
+    },
+    "dependencies": {
+        "@arbitrum/nitro-contracts": "^3.1.1",
+        "@inquirer/input": "^4.1.8",
+        "@inquirer/number": "^3.0.11",
+        "@inquirer/password": "^4.0.16",
+        "@inquirer/select": "^4.1.1",
+        "@arbitrum/sdk": "^4.0.3",
+        "ethers-arbitrum": "npm:ethers@^5.1.0",
+        "node-fetch": "2"
+    }
+}

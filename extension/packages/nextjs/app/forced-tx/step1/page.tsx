@@ -40,7 +40,7 @@ export default function ForcedTxStep1() {
   const handleProceedToStep2 = () => {
     if (signedTxData) {
       // Store transaction data in localStorage before navigating
-      localStorage.setItem('forcedTx', JSON.stringify(signedTxData));
+      localStorage.setItem("forcedTx", JSON.stringify(signedTxData));
       router.push("/forced-tx/step2");
     } else {
       notification.error("No signed transaction data available");
@@ -70,13 +70,19 @@ export default function ForcedTxStep1() {
                 <li>
                   Run the following command to sign a new transaction with your deployer wallet. It is important to note
                   that this transaction will not be broadcasted, only signed.
-                  <pre className="bg-base-300 p-4 rounded-lg mt-2">
-                    <code>yarn sign-tx</code>
+                  <pre className="bg-base-300 p-4 rounded-lg mt-2 mb-2">
+                    <code>yarn hardhat:sign-tx</code>
                   </pre>
+                  Or...
+                  <pre className="bg-base-300 p-4 rounded-lg mt-2 mb-2">
+                    <code>yarn foundry:sign-tx</code>
+                  </pre>
+                  if you are using Foundry.
                 </li>
                 <li>
-                  We will use this script to sign a transaction that uses one of your deployed contracts. The real magic will happen in the next step when we take this signed L2 transaction and send
-                  it through the Arbitrum Delayed Inbox contract on the L1 chain.
+                  We will use this script to sign a transaction that uses one of your deployed contracts. The real magic
+                  will happen in the next step when we take this signed L2 transaction and send it through the Arbitrum
+                  Delayed Inbox contract on the L1 chain.
                 </li>
               </ol>
             </div>
@@ -129,8 +135,8 @@ export default function ForcedTxStep1() {
             )}
 
             <div className="text-sm opacity-70">
-              Note: After you have run the script, the transaction will appear here.Once you&apos;ve verified the transaction details, you will be able to click the &quot;Proceed to Step 2&quot; button to
-              continue.
+              Note: After you have run the script, the transaction will appear here. Once you&apos;ve verified the
+              transaction details, you will be able to click the &quot;Proceed to Step 2&quot; button to continue.
             </div>
           </div>
         </div>
