@@ -9,7 +9,7 @@ import { useScaffoldEventHistory, useScaffoldReadContract, useScaffoldWriteContr
 import { useTargetNetwork } from "~~/hooks/scaffold-eth/useTargetNetwork";
 import { getL2ChainId, getNetworkName, isChainL1 } from "~~/utils/arbitrum/utils";
 
-const DEPLOYED_ON_BLOCK = 12960000n;
+const DEPLOYED_ON_BLOCK = 173810000n;
 
 type DeployedContractsType = {
   [chainId: number]: {
