@@ -69,9 +69,6 @@ export default function AddressTableExample() {
     fromBlock: DEPLOYED_ON_BLOCK,
     watch: true,
     filters: { sender: address },
-    blockData: true,
-    transactionData: true,
-    receiptData: true,
   });
 
   const {
@@ -84,9 +81,6 @@ export default function AddressTableExample() {
     fromBlock: DEPLOYED_ON_BLOCK,
     watch: true,
     filters: { recipient: address },
-    blockData: true,
-    transactionData: true,
-    receiptData: true,
   });
 
 
