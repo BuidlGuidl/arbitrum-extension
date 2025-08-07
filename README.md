@@ -1,7 +1,7 @@
 # Arbitrum Extension for Scaffold-ETH 2
 This extension adds Arbitrum specific features (bridging, address table, forced transactions) to your Scaffold-ETH 2 dApp and can be installed with:
 ```bash
-    npx create-eth@1.0.2 -e BuidlGuidl/arbitrum-extension
+    npx create-eth@1.0.3 -e BuidlGuidl/arbitrum-extension
 ```
 
 If you are not familiar with Scaffold-ETH 2, you can check the [docs](https://docs.scaffoldeth.io/) and the [website](https://scaffoldeth.io/).
