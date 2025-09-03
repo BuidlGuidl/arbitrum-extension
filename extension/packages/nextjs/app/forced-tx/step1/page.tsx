@@ -71,13 +71,8 @@ export default function ForcedTxStep1() {
                   Run the following command to sign a new transaction with your deployer wallet. It is important to note
                   that this transaction will not be broadcasted, only signed.
                   <pre className="bg-base-300 p-4 rounded-lg mt-2 mb-2">
-                    <code>yarn hardhat:sign-tx</code>
+                    <code>yarn sign-tx</code>
                   </pre>
-                  Or...
-                  <pre className="bg-base-300 p-4 rounded-lg mt-2 mb-2">
-                    <code>yarn foundry:sign-tx</code>
-                  </pre>
-                  if you are using Foundry.
                 </li>
                 <li>
                   We will use this script to sign a transaction that uses one of your deployed contracts. The real magic

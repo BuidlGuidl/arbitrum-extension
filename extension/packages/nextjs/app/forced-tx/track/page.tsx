@@ -128,10 +128,10 @@ export default function TrackTransaction() {
           }
         }
 
-        // If it's been more than 10 minutes (600 seconds) and we're still pending, start the force countdown
-        if (elapsedTime > 600 && status === TxStatus.PENDING) {
+        // If it's been more than 15 minutes (900 seconds) and we're still pending, start the force countdown
+        if (elapsedTime > 900 && status === TxStatus.PENDING) {
           if (pollToastId) notification.remove(pollToastId);
-          pollToastId = notification.warning("Transaction not found after 10 minutes. Starting force countdown.");
+          pollToastId = notification.warning("Transaction not found after 15 minutes. Starting force countdown.");
           setStatus(TxStatus.FORCE_COUNTDOWN);
           // countdown to 24hours after l1TxBlockTimestamp
           setForceCountdown(24 * 60 * 60 - elapsedTime);
@@ -144,12 +144,12 @@ export default function TrackTransaction() {
         console.log("Transaction not found, will try again:", error);
       }
       // Default is to return false unless the time limit is hit
-      // If it's been more than 10 minutes (600 seconds), start force countdown
+      // If it's been more than 15 minutes (900 seconds), start force countdown
       console.log("elapsedTime", elapsedTime);
-      if (elapsedTime > 600) {
+      if (elapsedTime > 900) {
         if (pollToastId) notification.remove(pollToastId);
         pollToastId = notification.warning(
-          "Transaction was not processed after 10 minutes. Starting countdown until you can force the transaction from L1.",
+          "Transaction was not processed after 15 minutes. Starting countdown until you can force the transaction from L1.",
         );
         setStatus(TxStatus.FORCE_COUNTDOWN);
         setForceCountdown(24 * 60 * 60 - elapsedTime); // 23:50 in seconds
@@ -451,7 +451,7 @@ export default function TrackTransaction() {
                   {status === TxStatus.FORCE_COUNTDOWN && (
                     <div className="alert alert-warning mt-4">
                       <span>
-                        Transaction not found after 10 minutes. You will be able to force the transaction to{" "}
+                        Transaction not found after 15 minutes. You will be able to force the transaction to{" "}
                         {l2ChainName || "L2"} after the countdown (24 hours).
                       </span>
                     </div>
